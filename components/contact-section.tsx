@@ -23,8 +23,12 @@ export function ContactSection() {
   useEffect(() => {
     // CONFIGURATION: Add your EmailJS Public Key here
     // Get it from: https://dashboard.emailjs.com/admin/account
-    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "YOUR_PUBLIC_KEY"
-    emailjs.init(publicKey)
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+    if (!publicKey) {
+      console.error("[v0] EmailJS Public Key is not configured. Please add NEXT_PUBLIC_EMAILJS_PUBLIC_KEY to your environment variables.")
+    } else {
+      emailjs.init(publicKey)
+    }
   }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -37,8 +41,19 @@ export function ContactSection() {
       // CONFIGURATION: Add your EmailJS Service ID and Template ID
       // Service ID: https://dashboard.emailjs.com/admin/services
       // Template ID: https://dashboard.emailjs.com/admin/templates
-      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "YOUR_SERVICE_ID"
-      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "YOUR_TEMPLATE_ID"
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+
+      // Validate configuration
+      if (!serviceId || !templateId || !publicKey) {
+        console.error("[v0] EmailJS configuration missing:", {
+          serviceId: serviceId ? "✓" : "✗ NEXT_PUBLIC_EMAILJS_SERVICE_ID",
+          templateId: templateId ? "✓" : "✗ NEXT_PUBLIC_EMAILJS_TEMPLATE_ID",
+          publicKey: publicKey ? "✓" : "✗ NEXT_PUBLIC_EMAILJS_PUBLIC_KEY"
+        })
+        throw new Error("EmailJS is not properly configured. Please add the required environment variables.")
+      }
 
       // EmailJS uses form element names to map to template variables:
       // Form field "name" → {{name}} in template
@@ -68,8 +83,9 @@ export function ContactSection() {
         }, 5000)
       }
     } catch (err) {
-      console.error("[v0] EmailJS error:", err)
-      setError("❌ Failed to send message. Please try again.")
+      console.error("[v0] EmailJS error:", err instanceof Error ? err.message : err)
+      const errorMessage = err instanceof Error ? err.message : "Failed to send message. Please try again."
+      setError(`❌ ${errorMessage}`)
       
       // Hide error message after 5 seconds
       setTimeout(() => {
