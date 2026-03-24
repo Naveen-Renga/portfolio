@@ -129,7 +129,7 @@ export function ContactSection() {
 
             {/* Form Card */}
             <div className="relative p-10 rounded-3xl bg-card/40 border border-border/40 backdrop-blur-xl">
-              <form onSubmit={handleSubmit} className="space-y-7">
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-7">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
@@ -138,8 +138,6 @@ export function ContactSection() {
                     <Input
                       type="text"
                       name="name"
-                      value={formData.name}
-                      onChange={handleChange}
                       placeholder="Your Name"
                       required
                       className="bg-secondary/50 border-border/50 focus:border-neon-cyan focus:ring-neon-cyan/20"
@@ -152,8 +150,6 @@ export function ContactSection() {
                     <Input
                       type="email"
                       name="email"
-                      value={formData.email}
-                      onChange={handleChange}
                       placeholder="your@email.com"
                       required
                       className="bg-secondary/50 border-border/50 focus:border-neon-cyan focus:ring-neon-cyan/20"
@@ -167,8 +163,6 @@ export function ContactSection() {
                   <Input
                     type="text"
                     name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
                     placeholder="Project Inquiry"
                     required
                     className="bg-secondary/50 border-border/50 focus:border-neon-cyan focus:ring-neon-cyan/20"
@@ -180,8 +174,6 @@ export function ContactSection() {
                   </label>
                   <Textarea
                     name="message"
-                    value={formData.message}
-                    onChange={handleChange}
                     placeholder="Tell us about your project..."
                     rows={5}
                     required
