@@ -55,7 +55,7 @@ export function AboutSection() {
             </p>
 
             {/* Stats */}
-            <div className="mt-12 grid grid-cols-3 gap-6 lg:gap-10">
+            <div className="mt-12 grid grid-cols-3 gap-4">
               {[
                 { value: "3+", label: "Projects Built" },
                 { value: "3", label: "Team Members" },
@@ -70,11 +70,11 @@ export function AboutSection() {
                   className="relative group cursor-default"
                 >
                   <div className="absolute inset-0 bg-gradient-to-br from-neon-blue/10 to-neon-cyan/10 rounded-xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  <div className="relative">
-                    <div className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-neon-blue to-neon-cyan bg-clip-text text-transparent">
+                  <div className="relative flex flex-col items-center text-center p-4 rounded-xl bg-card/30 border border-border/30 hover:border-neon-cyan/40 transition-all duration-300">
+                    <div className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-neon-blue to-neon-cyan bg-clip-text text-transparent leading-tight">
                       {stat.value}
                     </div>
-                    <div className="text-sm lg:text-base text-muted-foreground mt-2 font-medium">
+                    <div className="text-xs sm:text-sm text-muted-foreground mt-2 font-medium leading-snug text-balance">
                       {stat.label}
                     </div>
                   </div>
