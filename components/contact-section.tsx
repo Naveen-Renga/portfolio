@@ -303,19 +303,16 @@ export function ContactSection() {
             {/* Social Links and Instagram */}
             <div className="space-y-5">
               <div className="flex gap-4">
-                {["GitHub", "LinkedIn"].map((social, index) => (
-                  <motion.a
-                    key={social}
-                    href="#"
-                    className="px-6 py-3 rounded-xl bg-secondary/40 border border-border/40 text-muted-foreground hover:text-foreground hover:border-neon-cyan/40 transition-all duration-300 text-sm font-medium"
-                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.5, delay: 0.5 + index * 0.1 }}
-                  >
-                    {social}
-                  </motion.a>
-                ))}
+                <motion.a
+                  href="#"
+                  className="px-6 py-3 rounded-xl bg-secondary/40 border border-border/40 text-muted-foreground hover:text-foreground hover:border-neon-cyan/40 transition-all duration-300 text-sm font-medium"
+                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                >
+                  LinkedIn
+                </motion.a>
               </div>
 
               {/* Instagram Section */}
