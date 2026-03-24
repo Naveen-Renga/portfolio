@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useInView } from "framer-motion"
 import { useRef } from "react"
-import { Mail, MessageCircle, Send, CheckCircle, Instagram, AlertCircle } from "lucide-react"
+import { Mail, MessageCircle, Send, Instagram } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -14,10 +14,7 @@ export function ContactSection() {
   const ref = useRef(null)
   const formRef = useRef<HTMLFormElement>(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
-  const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   // Initialize EmailJS on component mount
   useEffect(() => {
@@ -34,8 +31,6 @@ export function ContactSection() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
-    setError(null)
-    setSuccessMessage(null)
 
     try {
       // CONFIGURATION: Add your EmailJS Service ID and Template ID
@@ -47,50 +42,22 @@ export function ContactSection() {
 
       // Validate configuration
       if (!serviceId || !templateId || !publicKey) {
-        console.error("[v0] EmailJS configuration missing:", {
-          serviceId: serviceId ? "✓" : "✗ NEXT_PUBLIC_EMAILJS_SERVICE_ID",
-          templateId: templateId ? "✓" : "✗ NEXT_PUBLIC_EMAILJS_TEMPLATE_ID",
-          publicKey: publicKey ? "✓" : "✗ NEXT_PUBLIC_EMAILJS_PUBLIC_KEY"
-        })
-        throw new Error("EmailJS is not properly configured. Please add the required environment variables.")
+        console.error("[v0] EmailJS configuration missing")
+        return
       }
 
-      // EmailJS uses form element names to map to template variables:
-      // Form field "name" → {{name}} in template
-      // Form field "email" → {{email}} in template
-      // Form field "subject" → {{subject}} in template
-      // Form field "message" → {{message}} in template
-      
       if (!formRef.current) {
-        throw new Error("Form reference not found")
+        return
       }
 
-      const response = await emailjs.sendForm(serviceId, templateId, formRef.current)
-
-      if (response.status === 200) {
-        setSuccessMessage("✅ Message sent successfully! We will contact you soon.")
-        setIsSubmitted(true)
-        
-        // Reset form
-        if (formRef.current) {
-          formRef.current.reset()
-        }
-        
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-          setSuccessMessage(null)
-          setIsSubmitted(false)
-        }, 5000)
+      await emailjs.sendForm(serviceId, templateId, formRef.current)
+      
+      // Reset form
+      if (formRef.current) {
+        formRef.current.reset()
       }
     } catch (err) {
       console.error("[v0] EmailJS error:", err instanceof Error ? err.message : err)
-      const errorMessage = err instanceof Error ? err.message : "Failed to send message. Please try again."
-      setError(`❌ ${errorMessage}`)
-      
-      // Hide error message after 5 seconds
-      setTimeout(() => {
-        setError(null)
-      }, 5000)
     } finally {
       setIsLoading(false)
     }
@@ -196,37 +163,11 @@ export function ContactSection() {
                     className="bg-secondary/50 border-border/50 focus:border-neon-cyan focus:ring-neon-cyan/20 resize-none"
                   />
                 </div>
-                {/* Error Message */}
-                {error && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="flex items-center gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400"
-                  >
-                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-medium">{error}</span>
-                  </motion.div>
-                )}
-
-                {/* Success Message */}
-                {successMessage && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="flex items-center gap-3 p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400"
-                  >
-                    <CheckCircle className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-medium">{successMessage}</span>
-                  </motion.div>
-                )}
-
                 <motion.div whileHover={!isLoading ? { scale: 1.02 } : {}} whileTap={!isLoading ? { scale: 0.98 } : {}}>
                   <Button
                     type="submit"
                     className="w-full bg-gradient-to-r from-neon-blue to-neon-cyan text-background font-semibold py-6 hover:shadow-[0_0_30px_rgba(0,200,255,0.5)] transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
-                    disabled={isLoading || isSubmitted}
+                    disabled={isLoading}
                   >
                     {isLoading ? (
                       <span className="flex items-center gap-2">
@@ -237,11 +178,6 @@ export function ContactSection() {
                           <Send className="w-5 h-5" />
                         </motion.div>
                         Sending...
-                      </span>
-                    ) : isSubmitted ? (
-                      <span className="flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5" />
-                        Message Sent!
                       </span>
                     ) : (
                       <span className="flex items-center gap-2">
